@@ -1,0 +1,1 @@
+Okmeter is a realtime monitoring as a service that allows you to watch for internal processes status at you production. Alerts, charts and dashboards in realtime directly in the browser or mobile client allow you to sleep tight not worrying about errors.
