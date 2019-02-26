@@ -25,12 +25,12 @@ func main() {
 
     // display welcome info.
     yellow := color.New(color.FgYellow).SprintFunc()
-    shell.Println(yellow("Welcome to the Gutenberg cli"))
+    shell.Println(yellow("Welcome to the go-speechKit cli"))
 
     // register a function for "init" command.
     shell.AddCmd(&ishell.Cmd{
         Name: "init",
-        Help: "initialize Gutenberg",
+        Help: "initialize go-speechKit",
         Func: func(c *ishell.Context) {
             c.Print("Please enter access token: ")
             cmdString := c.ReadLine()
@@ -45,14 +45,14 @@ func main() {
             c.Print("Please enter folderId: ")
             folderId = c.ReadLine()
 
-            c.Println("Gutenberg is initialized. Type «process» to continue")
+            c.Println("go-speechKit is initialized. Type «process» to continue")
         },
     })
 
     // register a function for "process" command.
     shell.AddCmd(&ishell.Cmd{
         Name: "process",
-        Help: "processing gutenberg",
+        Help: "processing",
         Func: func(c *ishell.Context) {
             c.Print("Please enter path to text file: ")
             inputFilePath := c.ReadLine()
@@ -85,6 +85,11 @@ func main() {
     shell.Run()
 }
 
+// process is a function that calls YandeX SpeechKit API to generate ogg file
+// and converts via ffmpeg to the mp3
+// First it splits the text before sending to the API
+// For each text-blocks ogg file is generated
+// Then merge every chunk and convert to final mp3
 func process(textFile string, outputMp3 string, token string, folderId string) {
     textChunks := SplitText(textFile)
     outputTxt, err := os.Create("output.txt")
@@ -102,7 +107,7 @@ func process(textFile string, outputMp3 string, token string, folderId string) {
         outputTxt.WriteString(fmt.Sprintf("file '%s'\n", oggChunk))
     }
 
-    log.Println("[Gutenberg]: Converting...")
+    log.Println("[go-speechKit]: Converting...")
     cmd := exec.Command("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "output.txt", "-vn", "-ar", "44100", "-ac", "2", "-ab", "192k", "-f", "mp3", outputMp3)
 
     // Debug exec commands
